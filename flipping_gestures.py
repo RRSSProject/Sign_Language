@@ -38,7 +38,7 @@ def flip_gesture_images(src_folder, dest_folder, gesture_name):
     print(f"Flipping complete. {gesture_name} images saved to {dest_folder}")
 
 if __name__ == "__main__":  # Corrected the condition
-    src_scroll_up_folder = r"R:\Sign_language\Sign-language-recognition\demo\scroll_up"
-    dest_scroll_down_folder = r"R:\Sign_language\Sign-language-recognition\demo\scroll_down"
+    src_scroll_up_folder = r"E:\Sign_language\Sign-language-recognition\demo\scroll_up"
+    dest_scroll_down_folder = r"E:\Sign_language\Sign-language-recognition\demo\scroll_down"
     # Flip scroll_up images to create scroll_down images
     flip_gesture_images(src_scroll_up_folder, dest_scroll_down_folder, "scroll_down")

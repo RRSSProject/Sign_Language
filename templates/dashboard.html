@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --transition-speed: 0.3s;
+            --border-radius: 8px; /* Define a variable for border radius */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif; /* Consistent font family */
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 30px; /* Reduced padding */
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: headerFadeIn 1s ease-in-out;
+        }
+
+        @keyframes headerFadeIn {
+            from { opacity: 0; transform: translateY(-20px); } /* Added transform */
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px; /* Added padding */
+            
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0; /* Removed default list padding */
+        }
+
+        .sidebar-nav li {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            display: flex;
+            align-items: center;
+            border-radius: var(--border-radius); /* Use variable */
+        }
+
+        .sidebar-nav li:hover {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .sidebar-nav li.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-nav li i {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-image:url('{{ url_for('static', filename='images/bg-image.jpg') }}');
+            background-position:center;
+            background-size:cover;
+            
+        }
+
+        .section {
+            display: none;
+            animation: sectionFadeIn 0.5s ease-in-out;
+            padding: 20px;
+            
+            border-radius: var(--border-radius); 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.6); 
+            margin-bottom: 20px; /* Added margin */
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes sectionFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .home-content, .account-content, .recognition-content {
+            max-width: auto;
+            margin: 0 auto;
+            text-align: justify;
+            text-justify: inter-word;
+            line-height:1.6;
+        }
+
+        .gestures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap:20px;
+            scrollbar-width: none;
+        }
+
+        .gesture-card {
+            background-color: white;
+            border-radius: var(--border-radius); /* Use variable */
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform var(--transition-speed);
+            text-align: center;
+            padding: 10px; 
+            scroll-snap-align:start;
+            
+        }
+
+        .gesture-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .gesture-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background-color:white;
+        }
+
+        .gestures-container {
+            max-height: 420px;
+            overflow-y: auto; 
+            scrollbar-width: none;
+            padding: 15px 0;
+            scroll-snap-type: y mandatory;
+        }        
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius); /* Use variable */
+            cursor: pointer;
+            transition: background-color var(--transition-speed);
+            margin-top: 10px; /* Added margin */
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+            .gestures-grid {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+            }
+        }
+
+        /*Account Section Styling*/
+        .user-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /*Responsive grid*/
+            gap: 20px;
+        }
+
+        .detail-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .detail-item label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="header">
+        <h1>Empowering Communication Through Gesture Recognition</h1>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-nav">
+                <li class="active" onclick="showSection('home')">
+                    <i class="fas fa-home"></i> Home
+                </li>
+                <li onclick="showSection('gestures')">
+                    <i class="fas fa-hands"></i> Gestures
+                </li>
+                <li onclick="showSection('recognition')">
+                    <i class="fas fa-camera"></i> Recognition
+                </li>
+                <li onclick="showSection('account')">
+                    <i class="fas fa-user"></i> Account
+                </li>
+                <li onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <!--div id="home" class="section active">
+                <div class="home-content">
+                    <h2>Welcome ,</h2>
+                    <p>Sign language is a vital means of communication for the deaf and hard-of-hearing community. 
+                    It enables individuals to express themselves, share ideas, and participate fully in society.</p>
+                    <p>Our application bridges the communication gap by providing real-time sign language recognition, 
+                    helping to create a more inclusive world where everyone can communicate effectively.</p>
+                    <p>With this technology, we aim to empower individuals with hearing impairments to interact 
+                    seamlessly with others, breaking down barriers and fostering understanding.</p>
+                </div>
+            </div>
+
+            <div id="home" class="section active">
+                <div class="home-content">
+                    <h2>Welcome to the Real-Time Sign Language Recognition System</h2>
+                    <p>Sign language is an essential means of communication for individuals who are deaf or hard of hearing. However, the lack of common knowledge of sign language among the general population creates a communication barrier.</p>
+                    
+                    <p>Our system is designed to bridge this gap by leveraging **Artificial Intelligence (AI) and Machine Learning** to recognize hand gestures and convert them into meaningful text. This provides an intuitive way for sign language users to interact with non-sign language users in real time.</p>
+            
+                    <p>Key features of our system include:</p>
+                    <ul>
+                        <li>🔍 **Real-time hand gesture recognition** using deep learning.</li>
+                        <li>📷 **Live video feed processing** to detect and classify hand gestures.</li>
+                        <li>📖 **Word prediction and suggestions** to assist users in forming complete sentences.</li>
+                        <li>📡 **Seamless communication** between sign language users and non-sign language users.</li>
+                        <li>🔐 **User authentication system** for secure access and personalized experiences.</li>
+                    </ul>
+            
+                    <p>By converting sign language into text, our system fosters inclusivity and ensures that individuals who rely on sign language can communicate effortlessly with the wider community.</p>
+                    
+                    <p>Join us in creating a world where communication is **barrier-free and accessible to all.**</p>
+                </div>
+            </div -->
+            
+            <div id="home" class="section active">
+                <div class="home-content">
+                    <h2>Welcome {{ user.name }},</h2>
+                    <br>
+                    <p>Many people who are deaf or hard of hearing use sign language to communicate. However, most people do not know sign language, which makes communication difficult.</p>
+            
+                    <p>Our system helps solve this problem by using a camera to recognize **hand signs** and automatically convert them into text on the screen. This means that a person using sign language can “talk” to someone who does not know sign language, making conversations easier and more natural.</p>
+            
+                    <p>🌟 **What This System Does:**</p>
+                    <ul>
+                        <li>🎥 Uses a **camera** to watch hand movements.</li>
+                        <li>🖐️ Recognizes **sign language gestures**.</li>
+                        <li>🔤 Converts signs into **text on the screen**.</li>
+                        <li>💡 Suggests **words and phrases** to complete sentences.</li>
+                        <li>🗣️ Helps people communicate more **easily and effectively**.</li>
+                    </ul>
+            
+                    <p>By using this technology, we are helping **deaf individuals communicate with everyone** without needing a translator. This brings us closer to a world where communication is easy for everyone.</p>
+                </div>
+            </div>
+            
+
+            <!-- Gestures Section -->
+            <div id="gestures" class="section">
+                <h2 style="padding:0 0 10px 0">Learn Sign Language Gestures</h2>
+                <div class="gestures-container">
+                    <div class="gestures-grid">
+                        <!-- Images here -->
+                        {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+                        <div class="gesture-card">
+                            <img src="{{ url_for('static', filename='images/gestures/' + letter + '.jpg') }}" alt="{{ letter }}">
+                            <p>{{ letter }}</p>
+                        </div>
+                        {% endfor %}
+                        {% for sign in ['DEL', 'SPACE', 'SELECT', 'NOTHING', 'SCROLLUP', 'SCROLLDOWN'] %}
+                        <div class="gesture-card">
+                            <img src="{{ url_for('static', filename='images/gestures/' + sign.replace(' ', '_') + '.jpg') }}" alt="{{ sign }}">
+                            <p>{{ sign }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recognition Section > 
+            <div id="recognition" class="section">
+                <div class="home-content">
+                    <h2>Real-Time Sign Language Recognition</h2>
+                    <p>Our real-time sign language recognition system uses machine learning to interpret hand gestures and convert them into readable text.</p>
+                    <p>This technology helps bridge the communication gap for individuals who use sign language as their primary mode of communication.</p>
+                    <p>Click the button below to start recognizing gestures.</p>
+                    <button onclick="startRecognition()" >
+                        Start Recognition
+                    </button>
+                </div>
+            </div -->
+
+            <!--div id="recognition" class="section">
+                <div class="home-content">
+                    <h2>Real-Time Sign Language Recognition</h2>
+                    <p>Our system utilizes **computer vision and deep learning** to analyze hand gestures captured via a webcam and instantly translate them into text.</p>
+            
+                    <h3>📌 **How It Works:**</h3>
+                    <ol>
+                        <li>📸 The camera captures real-time images of the user's hand gestures.</li>
+                        <li>🤖 The deep learning model processes the image and classifies the gesture.</li>
+                        <li>🔤 The recognized gesture is converted into text and displayed on the screen.</li>
+                        <li>💡 Intelligent **word suggestions** help users form complete sentences.</li>
+                        <li>⏳ Users can perform additional actions like **deleting characters, adding spaces, and selecting words**.</li>
+                    </ol>
+            
+                    <h3>🌟 **Key Features of the Recognition System:**</h3>
+                    <ul>
+                        <li>🔄 **Continuous gesture detection** with real-time predictions.</li>
+                        <li>🖥️ **Live video processing** to enhance accuracy.</li>
+                        <li>💬 **Smart word suggestions** based on recognized letters.</li>
+                        <li>📝 **Dynamic text formation** for seamless communication.</li>
+                        <li>🖐️ **Special gestures** for actions like "delete," "space," and "select".</li>
+                    </ul>
+            
+                    <p>Our system supports various gestures, including:</p>
+                    <ul>
+                        <li>🆎 Alphabets (A-Z)</li>
+                        <li>🖐️ Common phrases like "Hello", "Thank You", and "Good Morning"</li>
+                        <li>⚡ Special commands like **Delete, Space, Select, Scroll Up, and Scroll Down**</li>
+                    </ul>
+            
+                    <p>Click the button below to start sign language recognition.</p>
+                    <button onclick="startRecognition()">
+                        Start Recognition
+                    </button>
+                </div>
+            </div-->
+            <div id="recognition" class="section">
+                <div class="home-content">
+                    <h2>Recognizing Gestures in Real-Time</h2>
+                    <p>Our system makes sign language **easy to understand** by translating hand movements into words on a screen. If you don’t know sign language, you can still communicate with someone who does!</p>
+            
+                    <h3>📌 **How It Works (In Simple Terms):**</h3>
+                    <ol>
+                        <li>👀 The system **watches your hand** using the camera.</li>
+                        <li>🤖 It **understands** the sign you are making.</li>
+                        <li>🔤 It **writes the word** on the screen.</li>
+                        <li>💡 It **suggests words** to complete your message.</li>
+                        <li>📩 You can form a full **sentence and communicate!**</li>
+                    </ol>
+            
+                    <h3>🌟 **Special Features:**</h3>
+                    <ul>
+                        <li>📷 **Live video recognition** – The camera recognizes hand signs instantly.</li>
+                        <li>🔠 **Recognizes A-Z letters** – You can spell words using sign language.</li>
+                        <li>💬 **Word Suggestions** – The system helps you form complete sentences.</li>
+                        <li>⬆⬇ **Scroll up & down** – You can select different word suggestions.</li>
+                        <li>🖐️ **Extra gestures** – Delete letters, add spaces, and select words easily.</li>
+                    </ul>
+            
+                    <p>👉 **To start recognizing sign language, click the button below.**</p>
+                    <button onclick="startRecognition()">
+                        Start Recognition
+                    </button>
+                </div>
+            </div>
+            
+    
+            <!-- Account Section -->
+            <div id="account" class="section">
+                <div class="account-content">
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <label>Full Name</label>
+                            <p>{{ user.name }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Username</label>
+                            <p>{{ user.username }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Gender</label>
+                            <p>{{ user.gender }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Email</label>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Member Since</label>
+                            <p>{{ user.created_at }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.sidebar-nav li').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        function logout() {
+            window.location.href = "/logout";
+        }
+
+        function startRecognition() {
+            window.location.href = "/start_recognition";
+        }
+
+    </script>
+</body>
+</html>

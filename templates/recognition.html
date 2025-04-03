@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaveLink Recognition</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 20px;
+        }
+        .exit-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .exit-btn:hover {
+            background-color: #c0392b;
+        }
+        .recognition-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 20px;
+            gap: 10px;
+            background-image:url('{{ url_for('static', filename='images/bg-image.jpg') }}');
+            background-position:center;
+            background-size:cover;
+        }
+        
+        /* Top section: Camera and Suggestions */
+        .top-section {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            max-height: 60vh; /* Ensures both camera and suggestions don't exceed 60% of viewport height */
+        }
+
+        .feed {
+            flex: 1;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            max-height: 60vh;
+        }
+        .feed-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 10px;
+        }
+        .video-feed {
+            flex: 1;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .video-feed img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Suggestions Feed */
+        .suggestions-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .suggestion-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .suggestion-item:hover {
+            background-color: #d6eaf8;
+        }
+        .suggestion-item.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Sequence feed - spans full width below */
+        .sequence-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .sequence-display {
+            width: 100%;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>WaveLink</h1>
+        <h3>Your Gesturs, Your Voice</h3>
+        <button class="exit-btn" onclick="exitRecognition()">Exit</button>
+    </div>
+
+    <div class="recognition-container">
+        <!-- Top Section: Camera Feed & Suggestions -->
+        <div class="top-section">
+            <!-- Left Side: Camera Feed -->
+            <div class="feed">
+                <div class="feed-title">Camera Feed</div>
+                <div class="video-feed">
+                    <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+                </div>
+            </div>
+
+            <!-- Right Side: Suggestions -->
+            <div class="feed">
+                <div class="feed-title">Suggestions</div>
+                <div class="suggestions-list" id="suggestions-container">
+                    <!-- Suggestions will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Sequence Feed -->
+        <div class="sequence-container">
+            <div class="feed">
+                <div class="feed-title">Sequence</div>
+                <div class="sequence-display" id="sequence-display">
+                    <!-- Recognized sequence will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to exit recognition mode
+        function exitRecognition() {
+                window.location.href = "/exit_recognition";
+        }
+
+        // Function to update prediction info
+        function updatePrediction() {
+            fetch('/get_prediction')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('current-gesture').textContent = data.res.toUpperCase();
+                    document.getElementById('confidence-score').textContent = (data.score * 100).toFixed(2);
+                });
+            
+            fetch('/get_suggestions')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('suggestions-container');
+                    container.innerHTML = '';
+                    data.suggestions.forEach((suggestion, index) => {
+                        const item = document.createElement('div');
+                        item.className = `suggestion-item ${index === data.current_index ? 'selected' : ''}`;
+                        item.textContent = suggestion;
+                        container.appendChild(item);
+                    });
+                });
+            
+            fetch('/get_sequence')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sequence-display').textContent = data.sequence;
+                });
+            
+            setTimeout(updatePrediction, 500);
+        }
+
+        // Start updating prediction info
+        updatePrediction();
+    </script>
+</body>
+</html>
