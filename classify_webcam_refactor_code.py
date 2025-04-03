@@ -1,19 +1,12 @@
-<<<<<<< HEAD
-=======
 # updated 14
->>>>>>> 3bf49c8 (Updated)
 import os
 import cv2
 from transformers import pipeline
 import tensorflow as tf
 import pyttsx3
 import numpy as np
-<<<<<<< HEAD
-from suggestions import suggestions
-=======
 # from display_test import display
 from suggestions import suggesstions
->>>>>>> 3bf49c8 (Updated)
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 predictor = pipeline("text-generation", model="gpt2", max_length=5)
@@ -51,11 +44,7 @@ engine = pyttsx3.init()
 previous_gesture = None
 current_suggestions = []
 current_index = 0
-<<<<<<< HEAD
-in_suggestion_mode = False
-=======
 in_suggestion_mode = True
->>>>>>> 3bf49c8 (Updated)
 
 
 def predict_next_word(sentence):
@@ -67,10 +56,6 @@ def predict_next_word(sentence):
     return new_words[:3] if new_words else []
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3bf49c8 (Updated)
 def speak(word):
     engine.say(word)
     engine.runAndWait()
@@ -82,52 +67,13 @@ def clear_suggestions():
 
 def toggle_typing_mode():
     global in_suggestion_mode
-<<<<<<< HEAD
-    in_suggestion_mode = True
-=======
     in_suggestion_mode = False 
->>>>>>> 3bf49c8 (Updated)
     print("Switched to suggestions mode" if in_suggestion_mode else "Switched to typing mode")
 
 # Function to Display Suggestions
 def display_suggestions():
     global sequence, current_index,img_suggestions
     if current_suggestions:
-<<<<<<< HEAD
-        img_suggestions = np.zeros((400, 500, 3), np.uint8)
-        start_y = 50  
-        for idx, suggestion in enumerate(current_suggestions):
-            color = (0, 255, 0) if idx == current_index else (255, 255, 255)  # Highlight selected word
-            cv2.putText(img_suggestions, suggestion, (50, start_y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-            start_y += 50
-        cv2.imshow("Suggestions", img_suggestions)
-
-# def update_suggestions(character):
-#     global current_suggestions, current_index
-
-#     typed_word += character
-#     # current_suggestions = suggestions(character)
-#     typed_word_suggestions = suggestions(typed_word) 
-#     current_index = 0
-#     display_suggestions()
-
-def update_suggestions(character):
-    global current_suggestions, current_index, typed_word, sequence
-
-    typed_word += character  # Update the partially typed word
-
-    # Get suggestions based on the typed word
-    typed_word_suggestions = suggestions(typed_word)  
-    # Get GPT-2 predictions for context-aware suggestions
-    last_words = " ".join(sequence.strip().split()[-3:])  # Use last 3 words for context
-    context_suggestions = predict_next_word(last_words)
-    # Merge both types of suggestions
-    current_suggestions = list(set(typed_word_suggestions + context_suggestions))  # Avoid duplicates
-    current_index = 0
-
-    display_suggestions()
-
-=======
             # Create a black image
             img_suggestions = np.zeros((400, 700, 3), np.uint8)
             start_y = 50
@@ -166,7 +112,6 @@ def update_suggestions(character):
 
 #     display_suggestions()
 
->>>>>>> 3bf49c8 (Updated)
 
 # def select_suggestion():
 #     global current_index, current_suggestions, sequence, in_suggestion_mode, typed_word
@@ -207,22 +152,14 @@ def select_suggestion():
 def scroll_up():
     global current_index,img_suggestions
     current_index = (current_index-1)%len(current_suggestions)
-<<<<<<< HEAD
-    clear_suggestions()
-=======
     # clear_suggestions()
->>>>>>> 3bf49c8 (Updated)
     display_suggestions()
 
 # Function to Scroll Down
 def scroll_down():
     global current_index
     current_index = (current_index+1)%len(current_suggestions)
-<<<<<<< HEAD
-    clear_suggestions()
-=======
     # clear_suggestions()
->>>>>>> 3bf49c8 (Updated)
     display_suggestions()
 
 # Main Loop
@@ -239,11 +176,6 @@ while True:
             res = res_tmp
             i = 0
             consecutive = consecutive + 1 if mem == res else 0
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> 3bf49c8 (Updated)
             if consecutive == 2 and res not in ['nothing']:
                 if res == 'space':
                     if typed_word:
@@ -254,42 +186,24 @@ while True:
                     sequence = sequence[:-1]
                 elif res == 'select':
                     select_suggestion()
-<<<<<<< HEAD
-                elif res == 'scroll_up':
-                    toggle_typing_mode()
-                    scroll_up()
-                elif res == 'scroll_down':
-                    toggle_typing_mode()
-                    scroll_down()
-=======
                 elif res == 'scroll up':
                     current_index = (current_index-1)%len(current_suggestions)
                     display_suggestions()
                 elif res == 'scroll down':
                     current_index = (current_index+1)%len(current_suggestions)
                     display_suggestions()
->>>>>>> 3bf49c8 (Updated)
                 else:
                     if in_suggestion_mode:
                         update_suggestions(res) 
                     else:
-<<<<<<< HEAD
-                         sequence += res
-                         typed_word += res
-=======
                         # update_suggestions(res)
                         sequence += res
                     # typed_word += res
->>>>>>> 3bf49c8 (Updated)
                 
                 consecutive = 0
         
         i += 1
-<<<<<<< HEAD
-        cv2.putText(img, f'{res.upper()}', (100, 400), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 255, 255), 4)
-=======
         cv2.putText(img, f'{res.upper()}', (100, 400), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 4)
->>>>>>> 3bf49c8 (Updated)
         mem = res
         cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
@@ -308,8 +222,6 @@ cv2.destroyAllWindows()
 cap.release()
 sess.close()
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -567,4 +479,3 @@ sess.close()
 # cv2.destroyAllWindows()
 # cap.release()
 # sess.close()
->>>>>>> 3bf49c8 (Updated)
