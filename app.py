@@ -8,6 +8,7 @@ import time
 import mysql.connector
 import re
 from datetime import datetime,timedelta
+import requests
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -88,6 +89,7 @@ def suggestions(character):
         "Z": ["Zoom meeting", "Zero worries", "Zip it", "Zeal", "Zoned out"]
     }
     return word_dict.get(character.upper(), [])
+
 
 def predict(image_data):
     global latest_prediction, sequence, suggestions_list, current_index, last_gesture_time
@@ -417,6 +419,42 @@ def get_suggestions():
 def get_sequence():
     return jsonify({'sequence': sequence})
 
+@app.route('/select_suggestion', methods=['POST'])
+def select_suggestion():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    data = request.get_json()
+    index = data.get('index', 0)
+    
+    global sequence, suggestions_list, current_index
+    
+    if suggestions_list and 0 <= index < len(suggestions_list):
+        sequence += suggestions_list[index] + " "
+        current_index = index  # Update the current index to match selection
+        return jsonify({'success': True})
+    
+    return jsonify({'success': False, 'message': 'Invalid selection'})
+
+@app.route('/handle_gesture', methods=['POST'])
+def handle_gesture():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    data = request.get_json()
+    gesture = data.get('gesture', '')
+    
+    global sequence, suggestions_list, current_index, last_gesture_time
+    
+    # Process the gesture immediately (no delay for button presses)
+    if gesture == 'del':
+        sequence = sequence[:-1]
+        suggestions_list = []
+    elif gesture == 'space':
+        sequence += " "
+    
+    last_gesture_time = time.time()
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True)
