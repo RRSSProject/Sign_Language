@@ -4,30 +4,436 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WaveLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --deep-blue: #0F4C81;
+            --bright-blue: #5B9BD5;
+            --sky-blue: #9DC3E6;
+            --light-blue: #DEEBF7;
+            --accent: #FFC000;
+            --white: #FFFFFF;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--deep-blue);
+            background-color: var(--light-blue);
         }
         
-        img {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
             width: 100%;
-            height: 100%;
-            object-fit: cover; 
-            cursor: pointer;  
-        }  
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo::before{
+            content: "👋";
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--deep-blue);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--bright-blue);
+        }
+        
+        .cta-button {
+            background: var(--deep-blue);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            background: var(--bright-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(15, 76, 129, 0.2);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--bright-blue) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .secondary-button {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .secondary-button:hover {
+            background: var(--white);
+            color: var(--deep-blue);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: var(--white);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--deep-blue);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid var(--sky-blue);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            color: var(--bright-blue);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--deep-blue);
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 80px 0;
+            background: var(--light-blue);
+        }
+        
+        .demo-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .demo-text {
+            flex: 1;
+        }
+        
+        .demo-text h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--deep-blue);
+        }
+        
+        .demo-box {
+            flex: 1;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid var(--sky-blue);
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 0;
+            background: var(--white);
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            color: var(--deep-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--deep-blue);
+            color: var(--white);
+            padding: 50px 0 20px;
+            text-align: center;
+        }
+        .footer-logo{
+            color: white; 
+            margin-bottom: 20px; 
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-logo::before {
+            content: "👋";
+            font-size: 24px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .demo-container {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-    <a href="/signup">
-        <img src="{{ url_for('static', filename='images/home-bg.png') }}" alt="Gesture Recognition" class="full-image">
-    </a>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">WaveLink</div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#demo">Demo</a>
+                    <a href="#how-it-works">How It Works</a>
+                    
+                </div>
+                <a href="/login" class="cta-button">Sign In</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Empowering Communication Through Gesture Recognition</h1>
+            <p>Transform sign language gestures into text in real-time, bridging communication gaps for the speech-impaired community.</p>
+            <div class="hero-buttons">
+                <a href="/signup" class="cta-button">Get Started</a>
+                <a href="#demo" class="secondary-button">See Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Key Features</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✋</div>
+                    <h3>Real-Time Recognition</h3>
+                    <p>Our AI model processes gestures instantly with over 95% accuracy, enabling fluid communication.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Smart Suggestions</h3>
+                    <p>Get context-aware word and phrase suggestions to speed up communication.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy Focused</h3>
+                    <p>All processing happens locally on your device - no data is sent to external servers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <div class="section-title">
+                <h2>See It In Action</h2>
+            </div>
+            <div class="demo-container">
+                <div class="demo-text">
+                    <h3>Experience Gesture Recognition</h3>
+                    <p>Our system converts ASL gestures into text in real-time using just your webcam. Try it yourself after signing up!</p>
+                    <ul style="margin-top: 20px; list-style-position: inside;">
+                        <li style="margin-bottom: 10px;">Supports 26 ASL alphabets</li>
+                        <li style="margin-bottom: 10px;">Space, delete, and select gestures</li>
+                        <li>Scroll through suggestions</li>
+                    </ul>
+                    <a href="/signup" class="cta-button" style="display: inline-block; margin-top: 30px;">Try Now</a>
+                </div>
+                <div class="demo-box">
+                    <!-- Placeholder for demo - would be replaced with your actual video feed -->
+                    <div style="background: #eee; height: 300px; display: flex; align-items: center; justify-content: center; border-radius: 5px; margin-bottom: 20px;">
+                        <p>Live gesture recognition demo</p>
+                    </div>
+                    <p>Sign in to access the real-time gesture recognition system</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Perform Gesture</h3>
+                    <p>Use your webcam to show ASL gestures within the detection frame</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Processing</h3>
+                    <p>Our TensorFlow model analyzes the gesture in real-time</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Output</h3>
+                    <p>The system converts gestures to text and provides smart suggestions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo" >WaveLink</div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#demo">Demo</a>
+                <a href="#how-it-works">Technology</a>
+                <a href="/login">Sign In</a>
+                <a href="/signup">Register</a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 WaveLink. Empowering Communication through Gesture Recognition.
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

@@ -3,87 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - WaveLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --deep-blue: #0F4C81;
+            --bright-blue: #5B9BD5;
+            --sky-blue: #9DC3E6;
+            --light-blue: #DEEBF7;
+            --accent: #FFC000;
+            --white: #FFFFFF;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-image:url('{{ url_for('static', filename='images/bg-image.jpg') }}');
-            background-position:center;
-            background-size:cover;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--bright-blue) 100%);
+            background-size: cover;
         }
+        
         .login-container {
-            max-width: 350px;
             width: 100%;
-            padding: 25px 30px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            back-filgroundter: blur(px);
+            max-width: 400px;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(15, 76, 129, 0.3);
         }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo::before {
+            content: "👋";
+            font-size: 28px;
+        }
+        
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--deep-blue);
             margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
         }
+        
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
+        
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #2c3e50;
+            font-weight: 500;
+            color: var(--deep-blue);
         }
+        
         input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 14px 16px;
+            border: 2px solid var(--sky-blue);
+            border-radius: 8px;
             font-size: 16px;
-            box-sizing: border-box;
+            transition: all 0.3s;
+            background-color: var(--light-blue);
         }
+        
+        input:focus {
+            border-color: var(--bright-blue);
+            box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.3);
+            outline: none;
+            background-color: var(--white);
+        }
+        
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
+            padding: 14px;
+            background: var(--deep-blue);
+            color: var(--white);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(15, 76, 129, 0.1);
         }
+        
         button:hover {
-            background-color: #2980b9;
+            background: var(--bright-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(15, 76, 129, 0.2);
         }
+        
         .signup-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            color: var(--deep-blue);
+            font-size: 15px;
         }
+        
         .signup-link a {
-            color:rgb(61, 12, 177);
+            color: var(--bright-blue);
             text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
         }
+        
         .signup-link a:hover {
+            color: var(--deep-blue);
             text-decoration: underline;
         }
+        
         .error {
-            color: red;
+            color: #E74C3C;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            padding: 12px;
+            background-color: #FDEDEC;
+            border-radius: 6px;
+            border-left: 4px solid #E74C3C;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+                margin: 0 20px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>Login</h1>
+        <div class="logo">WaveLink</div>
+        <h1>Welcome Back</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="error">
+                {% for category, message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+        
         <form action="/login" method="POST">
             <div class="form-group">
                 <label for="username_or_email">Username or Email</label>
@@ -92,9 +183,13 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+                <div class="forgot-password">
+                    <a href="/forgot-password">Forgot Password?</a>
+                </div>
             </div>
             <button type="submit">Login</button>
         </form>
+        
         <div class="signup-link">
             Don't have an account? <a href="/signup">Sign Up</a>
         </div>

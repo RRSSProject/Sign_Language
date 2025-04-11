@@ -3,239 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Sign Up - WaveLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --deep-blue: #0F4C81;
+            --bright-blue: #5B9BD5;
+            --sky-blue: #9DC3E6;
+            --light-blue: #DEEBF7;
+            --accent: #FFC000;
+            --white: #FFFFFF;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-            font-size: 14px;
-            color:black;
-            font-weight:bold;
+            font-family: 'Poppins', sans-serif;
         }
+        
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
-            background-image:url('{{ url_for('static', filename='images/bg-image.jpg') }}');
-            background-position:center;
-            background-size:cover;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--bright-blue) 100%);
+            padding: 20px;
         }
+        
         .signup-container {
-            max-width: 700px;
             width: 100%;
-            padding: 25px 30px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            back-filgroundter: blur(px);
+            max-width: 700px;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(15, 76, 129, 0.3);
         }
-        .signup-container .title {
-            font-size: 24px;
-            font-weight: 600;
-            position: relative;
-            color:black;
+        
+        .logo {
+            text-align: center;
             margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .signup-container .title::before {
+        
+        .logo::before {
+            content: "👋";
+            font-size: 28px;
+        }
+        
+        .title {
+            text-align: center;
+            color: var(--deep-blue);
+            margin-bottom: 30px;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .title::after {
             content: "";
             position: absolute;
-            left: 0;
-            bottom: -5px;
-            height: 3px;
-            width: 50px;
-            border-radius: 5px;
-            background: #3498db;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
         }
-        .content form .user-details {
+        
+        .user-details {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            margin: 20px 0 12px 0;
+            gap: 20px;
+            margin-bottom: 25px;
         }
-        form .user-details .form-group {
-            margin-bottom: 15px;
-            width: calc(100% / 2 - 20px);
+        
+        .form-group {
+            flex: 1 1 calc(50% - 20px);
+            min-width: 250px;
+            margin-bottom: 20px;
         }
-        form .form-group span.details {
+        
+        label {
             display: block;
+            margin-bottom: 8px;
             font-weight: 500;
-            margin-bottom: 5px;
-            color:black;
-            font-weight:bold;
+            color: var(--deep-blue);
         }
-        .user-details .form-group input {
-            height: 45px;
+        
+        input {
             width: 100%;
-            outline: none;
+            padding: 14px 16px;
+            border: 2px solid var(--sky-blue);
+            border-radius: 8px;
             font-size: 16px;
-            border-radius: 5px;
-            padding-left: 15px;
-            border: 1px solid #ddd;
-            transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.8);
-            background-color:transparent;
+            transition: all 0.3s;
+            background-color: var(--light-blue);
         }
-        .user-details .form-group input:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        
+        input:focus {
+            border-color: var(--bright-blue);
+            box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.3);
+            outline: none;
+            background-color: var(--white);
         }
-        form .gender-details .gender-title {
-            font-size: 18px;
-            font-weight: bold;
-            color:black;
-            margin-bottom: 10px;
+        
+        .gender-title {
+            font-weight: 500;
+            color: var(--deep-blue);
+            margin: 25px 0 15px;
+            display: block;
+            font-size: 16px;
         }
-        form .category {
+        
+        .gender-options {
             display: flex;
-            width: 80%;
-            margin: 14px 0;
-            justify-content: space-between;
+            gap: 25px;
+            margin-bottom: 30px;
         }
-        form .category label {
+        
+        .gender-option {
             display: flex;
             align-items: center;
-            cursor: pointer;
         }
-        form .category label .dot {
-            height: 18px;
+        
+        .gender-option input {
             width: 18px;
-            border-radius: 50%;
+            height: 18px;
             margin-right: 10px;
-            background:rgb(246, 241, 241);
-            border: 5px solid transparent;
-            transition: all 0.3s ease;
+            accent-color: var(--bright-blue);
         }
-        #dot-1:checked~.category label .one,
-        #dot-2:checked~.category label .two,
-        #dot-3:checked~.category label .three {
-            background: #3498db;
-            border-color: #d9d9d9;
+        
+        .gender-option label {
+            margin-bottom: 0;
+            color: var(--deep-blue);
+            font-weight: 400;
         }
-        form input[type="radio"] {
-            display: none;
-        }
-        form .button {
-            height: 45px;
-            margin: 35px 0;
-        }
-        form .button input {
-            height: 100%;
+        
+        button {
             width: 100%;
-            border-radius: 5px;
+            padding: 14px;
+            background: var(--deep-blue);
+            color: var(--white);
             border: none;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 1px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #3498db;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(15, 76, 129, 0.1);
         }
-        form .button input:hover {
-            background: #2980b9;
+        
+        button:hover {
+            background: var(--bright-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(15, 76, 129, 0.2);
         }
+        
         .login-link {
             text-align: center;
-            margin-top: 20px;
-            color: #2c3e50;
+            margin-top: 25px;
+            color: var(--deep-blue);
+            font-size: 15px;
         }
+        
         .login-link a {
-            color: #3498db;
+            color: var(--bright-blue);
             text-decoration: none;
-            font-weight:bold;
+            font-weight: 600;
+            transition: all 0.3s;
         }
+        
         .login-link a:hover {
+            color: var(--deep-blue);
             text-decoration: underline;
         }
         
-        /* Responsive media query code for mobile devices */
-        @media(max-width: 584px) {
-            .signup-container {
-                max-width: 100%;
-            }
-            form .user-details .form-group {
-                margin-bottom: 15px;
-                width: 100%;
-            }
-            form .category {
-                width: 100%;
-            }
-            .content form .user-details {
-                max-height: 300px;
-                overflow-y: scroll;
-            }
-            .user-details::-webkit-scrollbar {
-                width: 5px;
-            }
+        .error {
+            color: #E74C3C;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+            padding: 12px;
+            background-color: #FDEDEC;
+            border-radius: 6px;
+            border-left: 4px solid #E74C3C;
         }
-        /* Responsive media query code for mobile devices */
-        @media(max-width: 459px) {
-            .signup-container .content .category {
+        
+        @media (max-width: 600px) {
+            .form-group {
+                flex: 1 1 100%;
+            }
+            
+            .gender-options {
                 flex-direction: column;
+                gap: 12px;
+            }
+            
+            .signup-container {
+                padding: 30px 25px;
             }
         }
     </style>
 </head>
 <body>
     <div class="signup-container">
-        <div class="title">Registration</div>
-        <div class="content">
-            <form action="/signup" method="POST" enctype="multipart/form-data" id="signup-form">
-                <div class="user-details">
-                    <div class="form-group">
-                        <span class="details">Full Name</span>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <span class="details">Username</span>
-                        <input type="text" id="username" name="username" required>
-                    </div>
-                    <div class="form-group">
-                        <span class="details">Email</span>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <span class="details">Password</span>
-                        <input type="password" id="password" name="password" required 
-                               pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
-                               title="Minimum 8 characters with one uppercase, one number, and one special character">
-                    </div>
-                    <div class="form-group">
-                        <span class="details">Confirm Password</span>
-                        <input type="password" id="confirm_password" name="confirm_password" required>
-                    </div>
+        <div class="logo">WaveLink</div>
+        <div class="title">Create Your Account</div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="error">
+                    {% for category, message in messages %}
+                        {{ message }}
+                    {% endfor %}
                 </div>
-                <div class="gender-details">
-                    <input type="radio" name="gender" id="dot-1">
-                    <input type="radio" name="gender" id="dot-2">
-                    <input type="radio" name="gender" id="dot-3">
-                    <span class="gender-title">Gender</span>
-                    <div class="category">
-                        <label for="dot-1">
-                            <span class="dot one"></span>
-                            <span class="gender">Male</span>
-                        </label>
-                        <label for="dot-2">
-                            <span class="dot two"></span>
-                            <span class="gender">Female</span>
-                        </label>
-                        <label for="dot-3">
-                            <span class="dot three"></span>
-                            <span class="gender">Prefer not to say</span>
-                        </label>
-                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/signup" method="POST" id="signup-form">
+            <div class="user-details">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
-                <div class="button">
-                    <input type="submit" value="Sign Up">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
-            </form>
-            <div class="login-link">
-                Already have an account? <a href="/login">Login</a>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required
+                           pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                           title="Minimum 8 characters with one uppercase, one number, and one special character">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
             </div>
+            
+            <span class="gender-title">Gender</span>
+            <div class="gender-options">
+                <div class="gender-option">
+                    <input type="radio" name="gender" id="male" value="male">
+                    <label for="male">Male</label>
+                </div>
+                <div class="gender-option">
+                    <input type="radio" name="gender" id="female" value="female">
+                    <label for="female">Female</label>
+                </div>
+                <div class="gender-option">
+                    <input type="radio" name="gender" id="other" value="other">
+                    <label for="other">Prefer not to say</label>
+                </div>
+            </div>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+        
+        <div class="login-link">
+            Already have an account? <a href="/login">Login</a>
         </div>
     </div>
     
