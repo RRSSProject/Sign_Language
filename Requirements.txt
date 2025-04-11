@@ -2,3 +2,7 @@ tensorflow
 matplotlib
 numpy
 opencv-python
+Flask
+Flask-Cors
+mysql-connector-python
+python-dotenv
