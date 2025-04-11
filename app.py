@@ -7,11 +7,11 @@ from flask_cors import CORS
 import time
 import mysql.connector
 import re
-from datetime import datetime
+from datetime import datetime,timedelta
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'secret_key'
 CORS(app)
 
 # MySQL Database Configuration
@@ -143,8 +143,8 @@ def gen_frames():
             image_data = cv2.imencode('.jpg', img_resized)[1].tobytes()
 
             res, score = predict(image_data)
-            cv2.putText(img, f'{res.upper()}', (100, 400), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
-            cv2.putText(img, f'Score: {score:.5f}', (100, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
+            # cv2.putText(img, f'{res.upper()}', (100, 400), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
+            # cv2.putText(img, f'Score: {score:.5f}', (100, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255))
 
             ret, buffer = cv2.imencode('.jpg', img)
             frame = buffer.tobytes()
@@ -298,6 +298,109 @@ def video_feed():
     if 'user' not in session or not video_active:
         return "", 204
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    data = request.get_json()
+    user_id = session['user']['id']
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if username is already taken by another user
+        cursor.execute("SELECT id FROM users WHERE username = %s AND id != %s", 
+                      (data['username'], user_id))
+        if cursor.fetchone():
+            return jsonify({'success': False, 'message': 'Username already taken'})
+
+        # Update profile
+        cursor.execute("""
+            UPDATE users 
+            SET name = %s, username = %s, gender = %s 
+            WHERE id = %s
+        """, (data['name'], data['username'], data['gender'], user_id))
+        
+        conn.commit()
+        
+        # Update session data
+        session['user']['name'] = data['name']
+        session['user']['username'] = data['username']
+        session['user']['gender'] = data['gender']
+        
+        return jsonify({'success': True})
+        
+    except mysql.connector.Error as err:
+        return jsonify({'success': False, 'message': str(err)})
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    data = request.get_json()
+    user_id = session['user']['id']
+
+    if not validate_password(data['new_password']):
+        return jsonify({
+            'success': False, 
+            'message': 'Password must be 8+ chars with uppercase, number, and special char'
+        })
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verify current password - changed to use numeric index since it's a tuple
+        cursor.execute("SELECT password FROM users WHERE id = %s", (user_id,))
+        result = cursor.fetchone()
+        
+        if not result or result[0] != data['current_password']:
+            return jsonify({'success': False, 'message': 'Current password is incorrect'})
+        
+        # Update password
+        cursor.execute("UPDATE users SET password = %s WHERE id = %s", 
+                      (data['new_password'], user_id))
+        conn.commit()
+        
+        return jsonify({'success': True})
+        
+    except mysql.connector.Error as err:
+        return jsonify({'success': False, 'message': str(err)})
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    user_id = session['user']['id']
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Delete user
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        
+        return jsonify({'success': True})
+        
+    except mysql.connector.Error as err:
+        return jsonify({'success': False, 'message': str(err)})
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @app.route('/get_prediction')
 def get_prediction():
